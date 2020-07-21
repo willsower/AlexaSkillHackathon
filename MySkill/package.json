@@ -1,0 +1,16 @@
+{
+  "name": "myskill",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "alexa-sdk": "^1.0.25",
+    "aws-sdk": "^2.717.0",
+    "es6-promisify": "^6.1.1"
+  }
+}
