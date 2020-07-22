@@ -36,6 +36,14 @@ const handlers = {
   },
 
   /**
+   * Lists full onboarding timeline
+   */
+  'ListOnboardingTimelineFull'() {
+    const all = BeforeStart3060 + BeforeStart2030 + BeforeStart1020 + OneWeekBeforeStart + fridayBefore + firstWeek + ByDay30ofEmployment;
+    this.emit(':tell', all);
+  },
+
+  /**
    * Lists all saved recipes for the current user. The user can filter by quick or long recipes.
    * Slots: GetRecipeQuickOrLong
    */
