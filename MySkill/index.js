@@ -50,7 +50,7 @@ const handlers = {
    * Tell the user when their starting day is
    */
   'TellMeMyStartingDay'() {
-    const docClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+    const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
 
     let params = {
         TableName: "PreOnboard",
@@ -61,12 +61,13 @@ const handlers = {
     };
     docClient.get(params, function(err, data) {
         if (err) {
-            callback(err, null);
+            // callback(err, null);
+            console.log(err, null);
         } else {
-            callback(null, data);
+            // callback(null, data);
+            this.emit(':tell': 'Your start day is $')
         }
     });
-
   },
 
   /**
