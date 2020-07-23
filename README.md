@@ -141,3 +141,42 @@ npm i alexa-sdk aws-sdk es6-promisify —save
 -> Here is where we will import our code that we got in our IDE previously. In your index.js file. Delete everything and add the index.js you have.
 
 -> Add the package.json file that you have, and add the package-lock.json file that you have too.
+
+-> In my folder I have 4 files. index.js, package-lock.json, package.json, and util.js. You want to save when you make changes and deploy right before you test. 
+
+-> If we ran our code right now, and we said alexa open up our skill, it wouldn't do anything. Lets get alexa to tell us the full pre onboarding schedule. 
+
+-> Notice in our index.js, we have a bunch of constants that are holding all the lines of data, and if we look at our ListOnboardingTimelineFull function, it will repeat all of that information. 
+
+-> We have the code down to do it, but now we need to map what we say to alexa, to execute that line of code. 
+
+-> Go to Build -> Interaction Model -> Intents -> Add Intent -> Name it ListOnboardingTimelineFull (The name of the intent should be the same name as the function in index.js) Then click create custom intent.
+
+-> Once you create it, you will be directed to a Sample Utterances page. There you want to type out a bunch of sample/possible utterances the user might invoke that function. This is what I have. 
+
+````
+Tell me the timeline before my first day
+What is everythign I need to do for onboarding
+What is everything I need to do for pre onboarding
+{ask} onboarding timeline
+What do I need to accomplish before day one
+````
+
+-> Of course I could add a bunch more, but notice how I'm using what is known as a 'slot' on the 4th line. {ask}. To work with this, Go to Intents -> Slot Types. 
+
+-> Add Slot Type -> name it asking -> Next -> Then you can add all slot values that could possibly be used. I added the following 
+````
+tell me about the
+can you tell me what
+give me the
+what is the
+tell me the
+````
+
+-> These are all possible words that could be used in the 4th utterance that would replace {ask} "tell me about the...onboarding timeline". 
+
+-> Click Build Model, then go to Code then go to Code tab and click Deploy
+
+-> Go to Test tab, then go and type Alexa open up the /_____ skill. 
+
+-> Say "Alexa tell me about my onboarding timeline" Alexa will repeat all of the infos.
