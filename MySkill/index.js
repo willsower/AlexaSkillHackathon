@@ -61,6 +61,14 @@ const handlers = {
             "userName": "Tai Rose"
         }
     };
+
+    //Query DynamoDB data
+    dbGet(params).then(data => {
+        const rowData = data.Item;
+        if (rowData) {
+            this.emit(':tell', 'Your start date is currently ${rowData.startDate}');
+        }
+    })
   },
 
   /**
