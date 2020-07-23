@@ -121,3 +121,13 @@ npm init
 npm i alexa-sdk aws-sdk es6-promisify —save
 ````
 -> Create an index.js file to your current directory. Go ahead and paste the contents of what's in my index.js file to yours. I update it regularly.
+
+## Create Alexa Skill and Add Our Files
+
+-> Go to Alexa Developer console, login/create account, then click create skill 
+
+-> Type skill name, click the Custom button under "choose a model to add to your skill"
+
+-> Under "Choose a method to host yoru skill's backend resources" click the Alexa-Hosted (node.js). Click create skill
+
+-> Go ahead and just choose the "Hello World Skill" template. We will be deleting most of the stuff it makes for us here.
