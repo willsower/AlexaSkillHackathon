@@ -1,4 +1,7 @@
-# AlexaSkillHackathon
+### AlexaSkillHackathon
+
+# Project by: Timothy Bui, Alec Jenab, Muhammad Raza, Taichen Rose, and Robert Zhang
+
 Project Details
 
 Must haves:
@@ -93,7 +96,7 @@ _Adding MOCK data to our DB_
 }
 ````
 
-## Getting files ready for Alexa Skill, and Reading data
+## Getting files ready for Alexa Skill
 
 -> Need to get Node.js and npm installed. Will be using the node_modules SDK kit for alexa and AWS. Download Node.js from here https://nodejs.org/en/
 
