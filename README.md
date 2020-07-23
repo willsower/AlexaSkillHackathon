@@ -68,6 +68,7 @@ _Adding MOCK data to our DB_
 
 → So instead of having i9Section1Competion, i9Section2Completed, and more document completion columns we could do this as shown below.
 
+````
 {
   "HRDocumentInfo": {
     "i9Section1": {
@@ -90,3 +91,4 @@ _Adding MOCK data to our DB_
   "userId": "12345ABC",
   "userName": "Tai Rose"
 }
+````
