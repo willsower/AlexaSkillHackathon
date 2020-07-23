@@ -1,6 +1,5 @@
 const alexaSDK = require('alexa-sdk');
 const awsSDK = require('aws-sdk');
-awsSDK.config.update({region: 'us-east-1'});
 
 exports.handler = function(event, context, callback) {
     var alexa = alexaSDK.handler(event, context);
@@ -51,7 +50,7 @@ const handlers = {
    * Tell the user when their starting day is
    */
   'TellMeMyStartingDay'() {
-    let docClient = new AWS.DynamoDB.DocumentClient();
+    const docClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
     let fetchOneByKey = function () {
         var params = {
             TableName: "PreOnboard",
@@ -60,14 +59,7 @@ const handlers = {
                 "userName": "Tai Rose"
             }
         };
-        docClient.get(params, function (err, data) {
-            if (err) {
-                console.log("users::fetchOneByKey::error - " + JSON.stringify(err, null, 2));
-            }
-            else {
-                console.log("users::fetchOneByKey::success - " + JSON.stringify(data, null, 2));
-            }
-        })
+        docClient.scan(scanningParameters)
     }
     fetchOneByKey();
   },
