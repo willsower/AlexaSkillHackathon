@@ -117,3 +117,4 @@ npm init
 ````
 npm i alexa-sdk aws-sdk es6-promisify —save
 ````
+-> Create an index.js file to your current directory. Go ahead and paste the contents of what's in my index.js file to yours. I update it regularly.
