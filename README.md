@@ -1,6 +1,6 @@
-### AlexaSkillHackathon
+# AlexaSkillHackathon
 
-# Project by: Timothy Bui, Alec Jenab, Muhammad Raza, Taichen Rose, and Robert Zhang
+##### Project by: Timothy Bui, Alec Jenab, Muhammad Raza, Taichen Rose, and Robert Zhang
 
 Project Details
 
