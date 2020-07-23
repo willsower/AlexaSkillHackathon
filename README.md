@@ -29,7 +29,7 @@ Notes:
 * Use mock data !
 * Link to first webinar recording: https://register.gotowebinar.com/recording/1820250702161716492
 
-[Image: Screen Shot 2020-07-21 at 2.11.04 PM.png]
+
 
 
 *Basic Tasks:*
