@@ -131,3 +131,13 @@ npm i alexa-sdk aws-sdk es6-promisify —save
 -> Under "Choose a method to host yoru skill's backend resources" click the Alexa-Hosted (node.js). Click create skill
 
 -> Go ahead and just choose the "Hello World Skill" template. We will be deleting most of the stuff it makes for us here.
+
+-> Go to Invocation Tab on the left side, and change the Skill Invocation Name. Whatever you put here will be the thing you say "Alexa open up \____ skill"
+
+-> Click on Intents, and delete the HelloSkill or HelloWorld Intent, since we don't need that" Every once in awhile, go up and click "Save Model". You will want to "Build Model" right before you want to test your code.
+
+-> Click the Code tab at the top of the nav bar.
+
+-> Here is where we will import our code that we got in our IDE previously. In your index.js file. Delete everything and add the index.js you have.
+
+-> Add the package.json file that you have, and add the package-lock.json file that you have too.
