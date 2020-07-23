@@ -46,7 +46,7 @@ Notes:
 
 “Help”
 
-##Creating DynamoDB on AWS account
+## Creating DynamoDB on AWS account
 
 (Keep in mind, with our basic implementation of our skill, we are only ‘reading’ data from the DB. So all our mock data can be created inside of our AWS/Isengard account. Then we will just have to connect, our DB to our alexa skill code, and pull the data)
 
@@ -64,3 +64,29 @@ _Adding MOCK data to our DB_
 
 → When adding mock data, I found it easier to code everything using JSON instead of using the “Tree” form. At the top left corner where it says “Tree” and an arrow, you can click that and push “Text” so you can code it. This allows you to code multiple values if need be, may be faster too. (I’ll show an example of this at the bottom of this section)
 
+→ I was thinking a better way to store information in the DB instead of making a bunch of “items/columns” is using secondary indexes. You can read about this halfway through these white pages. https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html
+
+→ So instead of having i9Section1Competion, i9Section2Completed, and more document completion columns we could do this as shown below.
+
+{
+  "HRDocumentInfo": {
+    "i9Section1": {
+      "Completed": true,
+      "Details": "You must complete Section 1 of the Form I-9 prior to your first day. You will receive an email from i9 Advantage (amazon-i9@i9advantage.com) with a link, PIN, and instructions to log into their system. Please check your junk mail folder if you do not see the email from i9Advantage. If you have not received the e-mail within 24 hours of receiving this welcome email, or experience any other difficulties completing your I-9, please contact i9advantagesupport@amazon.com.",
+      "DueDate": "06/14/2020"
+    },
+    "i9Section2": {
+      "Completed": false,
+      "Details": "Before the end of your third day, it is mandatory for Section 2 of the Form I-9 to also be completed. Further instructions are provided below under What to Expect on Your Virtual First Day.",
+      "DueDate": "06/18/2020"
+    }
+  },
+  "InternationalIntern": false,
+  "ITGear": {
+    "Shipped": true,
+    "TrackingNumber": "1234ThisIsTotallyATrackingNumber"
+  },
+  "startDate": "06/15/2020",
+  "userId": "12345ABC",
+  "userName": "Tai Rose"
+}
