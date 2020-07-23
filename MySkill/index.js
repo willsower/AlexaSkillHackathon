@@ -1,10 +1,12 @@
 const alexaSDK = require('alexa-sdk');
+const awsSDK = require('aws-sdk');
+awsSDK.config.update({region: 'us-east-1'});
 
 exports.handler = function(event, context, callback) {
     var alexa = alexaSDK.handler(event, context);
 
     //Name of my dynamoDB table
-    // alexa.dynamoDBTableName = 'PreOnboard';
+    alexa.dynamoDBTableName = 'PreOnboard';
 
     alexa.registerHandlers(handlers);
     alexa.execute();
@@ -43,6 +45,31 @@ const handlers = {
   'ListOnboardingTimelineFull'() {
     const all = BeforeStart3060 + BeforeStart2030 + BeforeStart1020 + OneWeekBeforeStart + fridayBefore + firstWeek + ByDay30ofEmployment;
     this.emit(':tell', all);
+  },
+
+  /**
+   * Tell the user when their starting day is
+   */
+  'TellMeMyStartingDay'() {
+    let docClient = new AWS.DynamoDB.DocumentClient();
+    let fetchOneByKey = function () {
+        var params = {
+            TableName: "PreOnboard",
+            Key: {
+                "userId": "12345ABC",
+                "userName": "Tai Rose"
+            }
+        };
+        docClient.get(params, function (err, data) {
+            if (err) {
+                console.log("users::fetchOneByKey::error - " + JSON.stringify(err, null, 2));
+            }
+            else {
+                console.log("users::fetchOneByKey::success - " + JSON.stringify(data, null, 2));
+            }
+        })
+    }
+    fetchOneByKey();
   },
 
   'Unhandled'() {
