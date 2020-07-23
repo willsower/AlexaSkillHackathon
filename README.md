@@ -44,27 +44,45 @@ Notes:
 *_Creating DynamoDB (DynamoDB on our AWS Isengard accounts)_*
 
 (Keep in mind, with our basic implementation of our skill, we are only ‘reading’ data from the DB. So all our mock data can be created inside of our AWS/Isengard account. Then we will just have to connect, our DB to our alexa skill code, and pull the data)
+
 → Gave it a name (will change for final project)
+
 → Had userId/EmployeeID (String/Number) for primary key, and used userName (String) as sort key.
+
 → Create table
+
 [Image: Screen Shot 2020-07-21 at 12.34.12 PM.png]
 
 (Notice the PreOnboard table, when we click the “Items” tab, automatically has “userID” and “userName” as a column field for our DB.)
 [Image: Screen Shot 2020-07-21 at 12.38.34 PM.png]_Adding MOCK data to our DB_
+
 → So DynamoDB doesn’t have “columns". They have "items" and "attributes" for those items. To create an item, just click the + sign and click append, and then choose the type, add the name of your item. As you can see below I added "startDate" as a string, since DynamoDB doesn’t have a Date type, so I’ll store the start date as a string and parse the value using the date() function in code.
+
 → When adding mock data, I found it easier to code everything using JSON instead of using the “Tree” form. At the top left corner where it says “Tree” and an arrow, you can click that and push “Text” so you can code it. This allows you to code multiple values if need be, may be faster too. (I’ll show an example of this at the bottom of this section)
+
 [Image: Screen Shot 2020-07-21 at 12.44.54 PM.png]
+
 → Here is an example of a single piece of data in the table.
+
 [Image: Screen Shot 2020-07-21 at 12.55.36 PM.png]
+
 → I can edit this table value if I need to. I click on the square radio button next to it, and go to actions then click edit. I can add/delete/update data or add more items.
+
 [Image: Screen Shot 2020-07-21 at 12.57.58 PM.png]
+
 → I was thinking a better way to store information in the DB instead of making a bunch of “items/columns” is using secondary indexes. You can read about this halfway through these white pages. 
+
 https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html
+
 → So instead of having i9Section1Competion, i9Section2Completed, and more document completion columns we could do this as shown below.
+
 [Image: Screen Shot 2020-07-21 at 1.13.17 PM.png]
+
 → Updated version 
 Note: The only updated backend thing that HR would need to do is update the boolean values for completion and add the tracking number. Of course there are more HR Documents, but these were the only ones that came to mind currently. 
+
 [Image: Screen Shot 2020-07-21 at 1.14.08 PM.png]
+
 If someone wants to copy and paste, update what I did into THEIR DB, here is my code: 
 {
 "HRDocumentInfo": {
