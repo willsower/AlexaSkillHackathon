@@ -51,17 +51,22 @@ const handlers = {
    */
   'TellMeMyStartingDay'() {
     const docClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
-    let fetchOneByKey = function () {
-        var params = {
-            TableName: "PreOnboard",
-            Key: {
-                "userId": "12345ABC",
-                "userName": "Tai Rose"
-            }
-        };
-        docClient.scan(scanningParameters)
-    }
-    fetchOneByKey();
+
+    let params = {
+        TableName: "PreOnboard",
+        Key: {
+            "userId": "12345ABC",
+            "userName": "Tai Rose"
+        }
+    };
+    docClient.get(params, function(err, data) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, data);
+        }
+    });
+
   },
 
   /**
