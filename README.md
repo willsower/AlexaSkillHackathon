@@ -184,3 +184,5 @@ tell me the
 ## Connecting to DynamoDB
 
 -> Now to make things more interesting. I want to ask Alexa when my starting day is. So first I'll go to my Intents, add the TellMeMyStartingDay, then add all possible utterances (use slots if you want) to invoke this. Unlike before, we are pulling this data from dynamoDB, it's not in our local script that alexa can read from. So we will have to use lambda to help us grab our data from alexa.
+
+-> We need to make an IAM role to allow the user to read data from the database. We don't want EVERYONE to be able to access this database. Go to IAM click on Roles, click Create Role, click Lambda, then select the DynamoDBReadOnlyAccess permission. This is because we don't want to give the user full access. We don't want them to change, update, delete, create anything. Only read what is already there. Click Next to Tags. Click next again, add a name to your role. I called mine "ReadOnlyAccessDB." THen click Create Role. 
