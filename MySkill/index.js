@@ -1,17 +1,21 @@
 const alexaSDK = require('alexa-sdk');
 const awsSDK = require('aws-sdk');
+const promisify = require('es6-promisify');
+const appId = 'amzn1.ask.skill.c177d307-c4a1-4d28-9cce-70097a58a814'; // Get this Skill ID on the page of all your alexa skills under the name of the skill
+
+const myTable = 'PreOnboard';
+const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
+const dbGet = promisify(docClient.get, docClient); //Get query
 
 exports.handler = function(event, context, callback) {
     var alexa = alexaSDK.handler(event, context);
 
     //Name of my dynamoDB table
-    alexa.dynamoDBTableName = 'PreOnboard';
+    alexa.dynamoDBTableName = myTable;
 
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
-
-const appId = 'amzn1.ask.skill.c177d307-c4a1-4d28-9cce-70097a58a814'; // Get this Skill ID on the page of all your alexa skills under the name of the skill
 
 const instructions = `Welcome, to the pre onboarding skill! You can ask about what is due this week, 
                       or about your timeline. Go ahead and say help if you want more example commands. 
@@ -50,8 +54,6 @@ const handlers = {
    * Tell the user when their starting day is
    */
   'TellMeMyStartingDay'() {
-    const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
-
     let params = {
         TableName: "PreOnboard",
         Key: {
@@ -59,15 +61,6 @@ const handlers = {
             "userName": "Tai Rose"
         }
     };
-    docClient.get(params, function(err, data) {
-        if (err) {
-            // callback(err, null);
-            console.log(err, null);
-        } else {
-            // callback(null, data);
-            this.emit(':tell': 'Your start day is $')
-        }
-    });
   },
 
   /**
