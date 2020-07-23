@@ -92,3 +92,28 @@ _Adding MOCK data to our DB_
   "userName": "Tai Rose"
 }
 ````
+
+## Getting files ready for Alexa Skill, and Reading data
+
+-> Need to get Node.js and npm installed. Will be using the node_modules SDK kit for alexa and AWS. Download Node.js from here https://nodejs.org/en/
+
+-> Go to IDE, and create a folder. Get into your folder and type the following commands. 
+
+-> To test if you correctly downloaded Node.js and npm, type these commands in the terminal
+````
+node -v
+
+npm -v
+````
+-> These commands are to find the versions if installed on your computer correctly. 
+
+-> If both come up with a version, then go ahead and initialize npm by typing the following into your terminal
+
+````
+npm init
+````
+-> Go ahead and click the enter key until everything is finished. Now that you've answered all the npm questions, use the following command to download the AWS SDK kit.
+
+````
+npm i alexa-sdk aws-sdk es6-promisify —save
+````
