@@ -180,3 +180,7 @@ tell me the
 -> Go to Test tab, then go and type Alexa open up the /_____ skill. 
 
 -> Say "Alexa tell me about my onboarding timeline" Alexa will repeat all of the infos.
+
+## Connecting to DynamoDB
+
+-> Now to make things more interesting. I want to ask Alexa when my starting day is. So first I'll go to my Intents, add the TellMeMyStartingDay, then add all possible utterances (use slots if you want) to invoke this. Unlike before, we are pulling this data from dynamoDB, it's not in our local script that alexa can read from. So we will have to use lambda to help us grab our data from alexa.
