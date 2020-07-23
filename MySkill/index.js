@@ -72,17 +72,26 @@ const handlers = {
     fetchOneByKey();
   },
 
+  /**
+   * Couldn't understand what was being said
+   */
   'Unhandled'() {
     console.error('problem', this.event);
     this.emit(':ask', 'An unhandled problem occurred!');
   },
 
+  /**
+   * Help intent will just read the instructions again
+   */
   'AMAZON.HelpIntent'() {
     const speechOutput = instructions;
     const reprompt = instructions;
     this.emit(':ask', speechOutput, reprompt);
   },
 
+  /**
+   * Cancel / Stop intent will exit the skill
+   */
   'AMAZON.CancelIntent'() {
     this.emit(':tell', 'Goodbye!');
   },
@@ -90,11 +99,4 @@ const handlers = {
   'AMAZON.StopIntent'() {
     this.emit(':tell', 'Goodbye!');
   }
-};
-
-exports.handler = function handler(event, context) {
-  const alexa = alexaSDK.handler(event, context);
-  alexa.APP_ID = appId;
-  alexa.registerHandlers(handlers);
-  alexa.execute();
 };
