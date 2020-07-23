@@ -1,10 +1,10 @@
 const alexaSDK = require('alexa-sdk');
 
 exports.handler = function(event, context, callback) {
-    var alexa = Alexa.handler(event, context);
+    var alexa = alexaSDK.handler(event, context);
 
     //Name of my dynamoDB table
-    alexa.dynamoDBTableName = 'PreOnboard';
+    // alexa.dynamoDBTableName = 'PreOnboard';
 
     alexa.registerHandlers(handlers);
     alexa.execute();
