@@ -73,6 +73,11 @@ _Adding MOCK data to our DB_
 
 ````
 {
+  "ManagerInfo": {
+    "ManagerAssigned": true,
+    "ManagerName": "John Doe", 
+    "ManagerEmail: "jdoe@amazon.com"
+  },
   "HRDocumentInfo": {
     "i9Section1": {
       "Completed": true,
