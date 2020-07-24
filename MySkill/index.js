@@ -51,6 +51,7 @@ const handlers = {
    * Tell the user when their starting day is
    */
   'TellMeMyStartingDay'() {
+    this.email(":tell", "hai");
     let params = {
         TableName: "PreOnboard",
         Key: {
@@ -63,8 +64,9 @@ const handlers = {
     DynamoDB.getItem(params, (err, data) => {
         if (err) {
             console.log(err, err.stack);
+            console.log("nothing :(");
         } else {
-            this.emit(':tell', "Your current start day is " + data.Key.startDay);
+            this.emit(':tell', "Your current start day is " + data.Item.startDay.userId);
         }
     })
   },
