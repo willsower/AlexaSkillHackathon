@@ -7,9 +7,8 @@ const dbGet = promisify(docClient.get, docClient); //Get query
 exports.handler = function(event, context, callback) {
     var alexa = alexaSDK.handler(event, context);
 
-    //Name of my dynamoDB table
-    // alexa.dynamoDBTableName = 'PreOnboard';
     alexa.appId = 'amzn1.ask.skill.c177d307-c4a1-4d28-9cce-70097a58a814';
+    // alexa.dynamoDBTableName = 'PreOnboard';
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
@@ -51,13 +50,13 @@ const handlers = {
    * Tell the user when their starting day is
    */
   'TellMeMyStartingDay'() {
-    // let params = {
-    //     TableName: "PreOnboard",
-    //     Key: {
-    //         "userId": "12345ABC",
-    //         "userName": "Tai Rose"
-    //     }
-    // };
+    let params = {
+        TableName: "PreOnboard",
+        Key: {
+            "userId": "12345ABC",
+            "userName": "Tai Rose"
+        }
+    };
 
     // //Query DynamoDB data
     // dbGet(params).then(data => {
