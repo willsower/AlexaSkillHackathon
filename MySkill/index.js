@@ -1,13 +1,13 @@
 const alexaSDK = require('alexa-sdk');
 const awsSDK = require('aws-sdk');
-const {promisify} = require('es6-promisify');
+// const {promisify} = require('es6-promisify');
 const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
-const dbGet = promisify(docClient.get, docClient); //Get query
+// const dbGet = promisify(docClient.get, docClient); //Get query
 
 exports.handler = function(event, context, callback) {
     var alexa = alexaSDK.handler(event, context);
 
-    alexa.appId = 'amzn1.ask.skill.c177d307-c4a1-4d28-9cce-70097a58a814';
+    // alexa.appId = 'amzn1.ask.skill.c177d307-c4a1-4d28-9cce-70097a58a814';
     // alexa.dynamoDBTableName = 'PreOnboard';
     alexa.registerHandlers(handlers);
     alexa.execute();
@@ -59,15 +59,22 @@ const handlers = {
     };
 
     //Query DynamoDB data
-    dbGet(params).then(data => {
-        const rowData = data.Item;
-        if (rowData) {
-            this.emit(':tell', 'Your start date is currently ${rowData.startDate}');
-            // this.emit(':tell', 'Your start date is currently');
+    // dbGet(params).then(data => {
+    //     const rowData = data.Item;
+    //     if (rowData) {
+    //         this.emit(':tell', 'Your start date is currently ${rowData.startDate}');
+    //         // this.emit(':tell', 'Your start date is currently');
 
+    //     }
+    // })
+    // this.emit(':tell', "hey");
+    docClient.get(params, function(err, data) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, data);
         }
     })
-    this.emit(':tell', "hey");
   },
 
   /**
