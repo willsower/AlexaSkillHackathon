@@ -1,8 +1,10 @@
+console.log("Start");
 const alexaSDK = require('alexa-sdk');
+console.log("TEST EHRE");
 const awsSDK = require('aws-sdk');
 const promisify = require('es6-promisify');
 const appId = 'amzn1.ask.skill.c177d307-c4a1-4d28-9cce-70097a58a814'; // Get this Skill ID on the page of all your alexa skills under the name of the skill
-
+console.log("RUN HERE??");
 const myTable = 'PreOnboard';
 const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
 const dbGet = promisify(docClient.get, docClient); //Get query
@@ -12,7 +14,7 @@ exports.handler = function(event, context, callback) {
 
     //Name of my dynamoDB table
     alexa.dynamoDBTableName = myTable;
-
+    alexa.appId = appId;
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
@@ -54,21 +56,24 @@ const handlers = {
    * Tell the user when their starting day is
    */
   'TellMeMyStartingDay'() {
-    let params = {
-        TableName: "PreOnboard",
-        Key: {
-            "userId": "12345ABC",
-            "userName": "Tai Rose"
-        }
-    };
+    // let params = {
+    //     TableName: "PreOnboard",
+    //     Key: {
+    //         "userId": "12345ABC",
+    //         "userName": "Tai Rose"
+    //     }
+    // };
 
-    //Query DynamoDB data
-    dbGet(params).then(data => {
-        const rowData = data.Item;
-        if (rowData) {
-            this.emit(':tell', 'Your start date is currently ${rowData.startDate}');
-        }
-    })
+    // //Query DynamoDB data
+    // dbGet(params).then(data => {
+    //     const rowData = data.Item;
+    //     if (rowData) {
+    //         // this.emit(':tell', 'Your start date is currently ${rowData.startDate}');
+    //         this.emit(':tell', 'Your start date is currently');
+
+    //     }
+    // })
+    this.emit(':tell', "hey");
   },
 
   /**
