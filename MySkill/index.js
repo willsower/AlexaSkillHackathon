@@ -1,7 +1,8 @@
 const alexaSDK = require('alexa-sdk');
 const awsSDK = require('aws-sdk');
+const DynamoDB = new awsSDK.DynamoDB();
 // const {promisify} = require('es6-promisify');
-const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
+// const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
 // const dbGet = promisify(docClient.get, docClient); //Get query
 
 exports.handler = function(event, context, callback) {
@@ -59,20 +60,11 @@ const handlers = {
     };
 
     //Query DynamoDB data
-    // dbGet(params).then(data => {
-    //     const rowData = data.Item;
-    //     if (rowData) {
-    //         this.emit(':tell', 'Your start date is currently ${rowData.startDate}');
-    //         // this.emit(':tell', 'Your start date is currently');
-
-    //     }
-    // })
-    // this.emit(':tell', "hey");
-    docClient.get(params, function(err, data) {
+    DynamoDB.getItem(params, (err, data) => {
         if (err) {
-            callback(err, null);
+            console.log(err, err.stack);
         } else {
-            callback(null, data);
+            this.emit(':tell', "Your current start day is " + data.Key.startDay);
         }
     })
   },
