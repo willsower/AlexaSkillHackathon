@@ -199,3 +199,5 @@ tell me the
 -> Click on the 'Choose or create an execution role' button next to permissions. We will add our IAM role that we created for lambda to read only from dynamoDB. Click on use an existing role. Add the role that we created prior. Then click Create Function. 
 
 -> Scroll down to where you see the Function Code window. Click on the Actions button in the right corner of the window and click Upload a .zip file. Upload the file we just created.
+
+-> Go back to Alexa Developer and go to the Code portion. Click deploy, this will get your lambda function up and running. Then lets go to test and see if it will print out the startDate.
