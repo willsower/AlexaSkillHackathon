@@ -51,24 +51,7 @@ const handlers = {
    * Tell the user when their starting day is
    */
   'TellMeMyStartingDay'() {
-    this.email(":tell", "hai");
-    let params = {
-        TableName: "PreOnboard",
-        Key: {
-            "userId": "12345ABC",
-            "userName": "Tai Rose"
-        }
-    };
-
-    //Query DynamoDB data
-    DynamoDB.getItem(params, (err, data) => {
-        if (err) {
-            console.log(err, err.stack);
-            console.log("nothing :(");
-        } else {
-            this.emit(':tell', "Your current start day is " + data.Item.startDay.userId);
-        }
-    })
+    this.emit(":tell", "hai");
   },
 
   /**
