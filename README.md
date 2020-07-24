@@ -193,3 +193,9 @@ tell me the
 -> We need to make an IAM role to allow the user to read data from the database. We don't want EVERYONE to be able to access this database. Go to IAM click on Roles, click Create Role, click Lambda, then select the DynamoDBReadOnlyAccess permission. This is because we don't want to give the user full access. We don't want them to change, update, delete, create anything. Only read what is already there. Click Next to Tags. Click next again, add a name to your role. I called mine "ReadOnlyAccessDB." THen click Create Role. 
 
 -> Go to finder and find the directory you are holding all files. Click on index.js, package.json, package-lock.json, and node_modules file, then compress them to a zip file. You will use this for a lambda function.
+
+-> Go to lambda on AWS service portal. Click Create Function. Name your function, I'll just name it 'preonboarding' for now. 
+
+-> Click on the 'Choose or create an execution role' button next to permissions. We will add our IAM role that we created for lambda to read only from dynamoDB. Click on use an existing role. Add the role that we created prior. Then click Create Function. 
+
+-> Scroll down to where you see the Function Code window. Click on the Actions button in the right corner of the window and click Upload a .zip file. Upload the file we just created.
