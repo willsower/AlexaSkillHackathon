@@ -1,6 +1,6 @@
 const alexaSDK = require('alexa-sdk');
 const awsSDK = require('aws-sdk');
-const promisify = require('es6-promisify');
+const {promisify} = require('es6-promisify');
 const docClient = new awsSDK.DynamoDB.DocumentClient({region: 'us-east-1'});
 const dbGet = promisify(docClient.get, docClient); //Get query
 
@@ -8,7 +8,7 @@ exports.handler = function(event, context, callback) {
     var alexa = alexaSDK.handler(event, context);
 
     //Name of my dynamoDB table
-    alexa.dynamoDBTableName = 'PreOnboard';
+    // alexa.dynamoDBTableName = 'PreOnboard';
     alexa.appId = 'amzn1.ask.skill.c177d307-c4a1-4d28-9cce-70097a58a814';
     alexa.registerHandlers(handlers);
     alexa.execute();
