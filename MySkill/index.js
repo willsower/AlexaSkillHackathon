@@ -1,10 +1,7 @@
 const awsSDK = require('aws-sdk');
-// const docClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
-awsSDK.config.update({region: 'us-east-1'});
+var db = new awsSDK.DynamoDB();
 
-exports.handle = function(e, ctx, callback) {
-    console.log("\n\nJERE\n\n");
-    var db = new awsSDK.DynamoDB();
+var readStartDate = function(e, ctx, callback) {
     let params = {
         TableName: "PreOnboard",
         Key: {
@@ -12,20 +9,12 @@ exports.handle = function(e, ctx, callback) {
             "userName": "Tai Rose"
         }
     };
-    console.log("\n\nJERE\n\n");
-    //Query DynamoDB data
-    db.getItem(params, function(err, data) {
+
+    db.query(params, function(err, data) {
         if (err) {
-            console.log("Error", err);
+            console.log(err, err.stack);
         } else {
-            console.log("Success", data.Item);
+            callback(null, data);
         }
     });
-    // docClient.get(params, function(err, data) {
-    //     if (err) {
-    //         callback(err, null);
-    //     } else {
-    //         callback(null, data);
-    //     }
-    // })
-}
+};
