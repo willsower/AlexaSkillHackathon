@@ -52,39 +52,6 @@ const handlers = {
    */
   'TellMeMyStartingDay'() {
     this.emit(":tell", "hai");
-
-    var db = new awsSDK.DynamoDB();
-    const docClient = new awsSDK.DynamoDB.DocumentClient();
-
-    var readStartDate = function(e, ctx, callback) {
-        condition = {};
-
-        condition["userId"] = {
-            ComparisonOperator: "EQ",
-            AttributeValueList:[{S: "12345ABC"}]
-        }
-
-        condition["userName"] = {
-            ComparisonOperator: "EQ",
-            AttributeValueList: [{S: "Tai Rose"}]
-        }
-
-        let params = {
-            TableName: "PreOnboard",
-            KeyConditions: condition,
-            ProjectionExpression: "startDate"
-        };
-
-        db.query(params, function(err, data) {
-            if (err) {
-                console.log(err, err.stack);
-            } else {
-                callback(null, this.emit(":tell", "Your starting day is ${data.Items.startDay}"));
-            }
-        });
-    };
-
-    exports.handler = readStartDate;
   },
 
   /**

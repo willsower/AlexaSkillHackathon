@@ -2,6 +2,23 @@ const awsSDK = require('aws-sdk');
 var db = new awsSDK.DynamoDB();
 const docClient = new awsSDK.DynamoDB.DocumentClient();
 
+exports.handler = function(event, context, callback) {
+    try {
+        var request = event.request;
+        if (request.type == 'TellMeMyStartingDay') {
+            readStartDate(event, context, callback);
+        } else {
+            throw("Unknown intent");
+        }
+
+    } catch (e) {
+        context.fail("Exception " + e);
+    }
+}
+
+/* 
+* Reads start date in dynamoDB
+*/
 var readStartDate = function(e, ctx, callback) {
     condition = {};
 
@@ -28,23 +45,5 @@ var readStartDate = function(e, ctx, callback) {
             callback(null, data["Item"]);
         }
     });
-
-    // var params = {
-    //     TableName: 'PreOnboard', 
-    //     Key: {
-    //         "userId": "12345ABC",
-    //         "userName": "Tai Rose"
-    //     }
-    // };
-
-    // docClient.query(params, function(err, data) {
-    //     if (err) {
-    //         callback(err, null);
-    //     } else {
-    //         callback(null, data);
-    //     }
-    // })
-    
 };
 
-exports.handler = readStartDate;
