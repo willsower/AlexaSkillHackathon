@@ -118,19 +118,47 @@ const ITGearHandler = {
         const {responseBuilder } = handlerInput;
         let data = getUserInfo(userID);
 
-        if (data.ITGear.Shipped == true) {
-            const speakOutput = "Your IT Gear is currently being shipped. The tracking number is " + data.ITGear.TrackingNumber.S;
-            return responseBuilder
-            .speak(speakOutput)
-            .getResponse();
-        } else {
+        // if (data.ITGear.Shipped == true) {
+        //     const speakOutput = "Your IT Gear is currently being shipped. The tracking number is " + data.ITGear.TrackingNumber.S;
+        //     return responseBuilder
+        //     .speak(speakOutput)
+        //     .getResponse();
+        // } else {
             const speakOutput = "You currently don't have any IT Gear shipments. Please check again about a week prior to your first day. You should have received your gear on the Friday prior to your start day. If not, contact HR.";
             return responseBuilder
             .speak(speakOutput)
             .getResponse();
-        }
+        // }
     }
 };
+const MyHRDocumentsHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'HRDocuments';
+    },
+    handle(handlerInput) {
+        const speakOutput = "Your tasks before day one include, complete any surveys sent to you regarding onboarding logistics. Completing your background check, details should be sent to your email. Complete both your I-9 Section 1, and Section 2. You should have also received an email regarding your MyDocs documents that need to be completed. Reach out to asp-offersandonboarding@amazon.com if you have any further questions about your onboarding or documentation.";
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+const DueDatesHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'DueDate';
+    },
+    handle(handlerInput) {
+        const speakOutput = "You can ask me what needs to be done before day 1 at amazon, or ask me your manager's contact information. I can also tell you when you start day is, and details about your documents. How can I help?";
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+}
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
@@ -215,6 +243,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         TellMeMyStartingDayHandler,
         ManagerHandler,
         ITGearHandler,
+        MyHRDocumentsHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
