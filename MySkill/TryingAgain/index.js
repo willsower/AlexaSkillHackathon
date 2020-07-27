@@ -2,6 +2,8 @@ const Alexa = require('ask-sdk-core');
 const awsSDK = require('aws-sdk');
 awsSDK.config.update({region: "us-east-1"});
 const docClient = new awsSDK.DynamoDB.DocumentClient();
+var dbHelper = function () { };
+const tableName = "PreOnboard";
 
 /**
  * Onboarding Timeline 
@@ -13,6 +15,34 @@ const OneWeekBeforeStart = "One week before your start day New Hire Orientation 
 const ByDay30ofEmployment = "By day 30 of employment, you need to obtain a SSN or SIN and US bank account, if needed.";
 const fridayBefore = "The Friday before you start, you should receive all IT assets and your security key through UPS or FedEX.";
 const firstWeek = "In your first week of employment at amazon. You should have already completed all assigned NHO tasks. Schedule weekly 1 on 1 meetings with your manager. And have completed trainings assigned by your manager in Embark, which is Amazon's onboarding tool.";
+
+/*
+* Helper functions
+*/
+
+dbHelper.prototype.getUserInfo = (userID) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: tableName,
+            KeyConditionExpression: "#userID = :user_id",
+            ExpressionAttributeNames: {
+                "#userID": "userId"
+            },
+            ExpressionAttributeValues: {
+                ":user_id": userID
+            }
+        }
+        docClient.query(params, (err, data) => {
+            if (err) {
+                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+                return reject(JSON.stringify(err, null, 2))
+            } 
+            console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+            resolve(data.Items)
+            
+        })
+    });
+}
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -45,27 +75,28 @@ const TellMeMyStartingDayHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
     async handle(handlerInput) {
-        var params = {
-            TableName: "PreOnboard",
-            Key: {
-                userID: "12345ABC"
-            }
-        };
-let val;
-        docClient.query(params, function(err, data) {
-            if (err) {
-                console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+        const {responseBuilder } = handlerInput;
+        const userID = "12345ABC"
+        return dbHelper.getUserInfo(userID)
+        .then((data) => {
+            var speechText = "Your movies are "
+            if (data.length == 0) {
+                speechText = "You do not have any data yet. Please try again a few days for the data to update."
             } else {
-                console.log("Query succeeded.");
-                val = data;
+                speechText += data.map(e => e.startDate).join(", ")
             }
-        });
 
-        const speakOutput = "Your starting day is currently set to " + val;
-        return handlerInput.responseBuilder
-        .speak(speakOutput)
-        .reprompt(speakOutput)
-        .getResponse();
+            return responseBuilder
+            .speak(speechText)
+            .reprompt(GENERAL_REPROMPT)
+            .getResponse();
+        })
+        .catch((err) => {
+            const speechText = "We cannot get your user information right now. Try again!"
+            return responseBuilder
+            .speak(speechText)
+            .getResponse();
+        })
     }
 };
 const HelpIntentHandler = {
