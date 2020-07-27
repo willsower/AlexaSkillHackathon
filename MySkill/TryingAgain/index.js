@@ -1,8 +1,21 @@
+/*
+*   Pre Onboarding Alexa Skill
+*   Authors: Timothy Bui, Alec Jenab, Muhammad Raza, Taichen Rose, and Robert Zhang
+*   Purpose: The purpose of this skill is to help newly hires/interns get ready prior to day one.
+*            The skill will be able to track IT Gear, answer questions about due dates, give the
+*            timeline of their pre onboarding journey, list manager contact info, and more.
+*   Functionality: This program is backed up by storing data in DynamoDB. The skill simply reads
+*                  information that has been updated on the server side. 
+*/
 const Alexa = require('ask-sdk-core');
 const awsSDK = require('aws-sdk');
 awsSDK.config.update({region: "us-east-1"});
 var db = new awsSDK.DynamoDB();
 const tableName = "PreOnboard";
+
+
+//User ID. This will be assigned to each user
+//which will correspond to DynamoDB
 const userID = "12345ABC";
 
 /**
