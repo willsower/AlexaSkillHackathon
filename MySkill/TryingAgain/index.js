@@ -20,28 +20,49 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 * Helper functions
 */
 
-dbHelper.prototype.getUserInfo = (userID) => {
-    return new Promise((resolve, reject) => {
-        const params = {
-            TableName: tableName,
-            KeyConditionExpression: "#userID = :user_id",
-            ExpressionAttributeNames: {
-                "#userID": "userId"
-            },
-            ExpressionAttributeValues: {
-                ":user_id": userID
-            }
-        }
-        docClient.query(params, (err, data) => {
-            if (err) {
-                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-                return reject(JSON.stringify(err, null, 2))
-            } 
-            console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-            resolve(data.Items)
+// dbHelper.prototype.getUserInfo = (userID) => {
+//     console.log("heyo");
+//     return new Promise((resolve, reject) => {
+//         const params = {
+//             TableName: tableName,
+//             KeyConditionExpression: "#userID = :user_id",
+//             ExpressionAttributeNames: {
+//                 "#userID": "userId"
+//             },
+//             ExpressionAttributeValues: {
+//                 ":user_id": userID
+//             }
+//         }
+//         docClient.query(params, (err, data) => {
+//             if (err) {
+//                 console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+//                 return reject(JSON.stringify(err, null, 2))
+//             } 
+//             console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+//             resolve(data.Items)
             
-        })
-    });
+//         })
+//     });
+// }
+
+function getUserInfo(userID) {
+    const params = {
+        TableName: tableName,
+        KeyConditionExpression: "#userID = :user_id",
+        ExpressionAttributeNames: {
+            "#userID": "userId"
+        },
+        ExpressionAttributeValues: {
+            ":user_id": userID
+        }
+    }
+    docClient.query(params, (err, data) => {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+            return 0;
+        } 
+        return data.Items;
+    })
 }
 
 const LaunchRequestHandler = {
@@ -74,27 +95,27 @@ const TellMeMyStartingDayHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
-    async handle(handlerInput) {
+    handle(handlerInput) {
         const {responseBuilder } = handlerInput;
-        const userID = "12345ABC"
-        return dbHelper.getUserInfo(userID)
+        const userID = "12345ABC";
+        return getUserInfo(userID)
         .then((data) => {
-            var speechText = "Your movies are "
+            let speakOutput = "";
             if (data.length == 0) {
-                speechText = "You do not have any data yet. Please try again a few days for the data to update."
+                speakOutput = "You do not have any data yet. Please try again a few days for the data to update.";
             } else {
-                speechText += data.map(e => e.startDate).join(", ")
+                speakOutput = data.map(e => e.startDate);
             }
 
             return responseBuilder
-            .speak(speechText)
-            .reprompt(GENERAL_REPROMPT)
+            .speak(speakOutput)
+            .reprompt(speakOutput)
             .getResponse();
         })
         .catch((err) => {
-            const speechText = "We cannot get your user information right now. Try again!"
+            const speakOutput = "We cannot get your user information right now. Try again!"
             return responseBuilder
-            .speak(speechText)
+            .speak(speakOutput)
             .getResponse();
         })
     }
