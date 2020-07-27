@@ -5,8 +5,12 @@ const docClient = new awsSDK.DynamoDB.DocumentClient();
 exports.handler = function(event, context, callback) {
     try {
         var request = event.request;
-        if (request.type == 'TellMeMyStartingDay') {
+        if (request.type = "LaunchRequest") {
+
+        } else if (request.type == "IntentRequest"){
+          if (request.intent.name == 'TellMeMyStartingDay') {
             readStartDate(event, context, callback);
+          }
         } else {
             throw("Unknown intent");
         }
