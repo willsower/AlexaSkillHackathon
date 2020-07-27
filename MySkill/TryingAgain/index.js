@@ -1,4 +1,7 @@
 const Alexa = require('ask-sdk-core');
+const awsSDK = require('aws-sdk');
+var db = new awsSDK.DynamoDB();
+const docClient = new awsSDK.DynamoDB.DocumentClient();
 
 /**
  * Onboarding Timeline 
@@ -25,7 +28,7 @@ const LaunchRequestHandler = {
 };
 const ListOnboardingTimelineFullHandler = {
     canHandle(handlerInput) {
-        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'ListOnboardingTimelineFull';
     },
     handle(handlerInput) {
         const speakOutput = BeforeStart3060 + BeforeStart2030 + BeforeStart1020 + OneWeekBeforeStart + fridayBefore + firstWeek + ByDay30ofEmployment;
@@ -33,6 +36,42 @@ const ListOnboardingTimelineFullHandler = {
             .speak(speakOutput)
             .reprompt(speakOutput)
             .getResponse();
+    }
+};
+const TellMeMyStartingDayHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
+    },
+    handle(handlerInput) {
+        condition = {};
+
+        condition["userId"] = {
+            ComparisonOperator: "EQ",
+            AttributeValueList:[{S: "12345ABC"}]
+        }
+
+        condition["userName"] = {
+            ComparisonOperator: "EQ",
+            AttributeValueList: [{S: "Tai Rose"}]
+        }
+
+        let params = {
+            TableName: "PreOnboard",
+            KeyConditions: condition,
+            ProjectionExpression: "startDate"
+        };
+
+        db.query(params, function(err, data) {
+            if (err) {
+                console.log(err, err.stack);
+            } else {
+                const speakOutput = "Your starting day is currently set to " + data["Item"];
+                return handlerInput.responseBuilder
+                    .speak(speakOutput)
+                    .reprompt(speakOutput)
+                    .getResponse();
+            }
+        });
     }
 };
 const HelpIntentHandler = {
@@ -115,6 +154,8 @@ const ErrorHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
+        ListOnboardingTimelineFullHandler,
+        TellMeMyStartingDayHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
