@@ -201,3 +201,5 @@ tell me the
 -> Scroll down to where you see the Function Code window. Click on the Actions button in the right corner of the window and click Upload a .zip file. Upload the file we just created.
 
 -> Go back to Alexa Developer and go to the Code portion. Click deploy, this will get your lambda function up and running. Then lets go to test and see if it will print out the startDate.
+
+-> Used https://developer.amazon.com/en-US/docs/alexa/hosted-skills/alexa-hosted-skills-personal-aws.html to connect my Alexa-lambda skill to a role.

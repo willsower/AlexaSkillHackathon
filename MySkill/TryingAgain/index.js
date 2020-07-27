@@ -1,9 +1,9 @@
 const Alexa = require('ask-sdk-core');
 const awsSDK = require('aws-sdk');
 awsSDK.config.update({region: "us-east-1"});
-const docClient = new awsSDK.DynamoDB.DocumentClient();
-var dbHelper = function () { };
+var db = new awsSDK.DynamoDB();
 const tableName = "PreOnboard";
+const userID = "12345ABC";
 
 /**
  * Onboarding Timeline 
@@ -20,48 +20,30 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 * Helper functions
 */
 
-// dbHelper.prototype.getUserInfo = (userID) => {
-//     console.log("heyo");
-//     return new Promise((resolve, reject) => {
-//         const params = {
-//             TableName: tableName,
-//             KeyConditionExpression: "#userID = :user_id",
-//             ExpressionAttributeNames: {
-//                 "#userID": "userId"
-//             },
-//             ExpressionAttributeValues: {
-//                 ":user_id": userID
-//             }
-//         }
-//         docClient.query(params, (err, data) => {
-//             if (err) {
-//                 console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-//                 return reject(JSON.stringify(err, null, 2))
-//             } 
-//             console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-//             resolve(data.Items)
-            
-//         })
-//     });
-// }
-
 function getUserInfo(userID) {
+    let condition = {};
+    condition["userId"] = {
+        ComparisonOperator: "EQ",
+        AttributeValueList:[{S: "12345ABC"}]
+    }
+
+    condition["userName"] = {
+        ComparisonOperator: "EQ",
+        AttributeValueList: [{S: "Tai Rose"}]
+    }
+
     const params = {
         TableName: tableName,
-        KeyConditionExpression: "#userID = :user_id",
-        ExpressionAttributeNames: {
-            "#userID": "userId"
-        },
-        ExpressionAttributeValues: {
-            ":user_id": userID
-        }
+        KeyConditions: condition,
+        ProjectionExpression: "startDate"
     }
-    docClient.query(params, (err, data) => {
+    db.query(params, (err, data) => {
         if (err) {
-            console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+            console.log(err, err.stack);
             return 0;
         } 
-        return data.Items;
+        console.log(data);
+        return data["Item"];
     })
 }
 
@@ -95,29 +77,36 @@ const TellMeMyStartingDayHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
         const {responseBuilder } = handlerInput;
-        const userID = "12345ABC";
-        return getUserInfo(userID)
-        .then((data) => {
-            let speakOutput = "";
-            if (data.length == 0) {
-                speakOutput = "You do not have any data yet. Please try again a few days for the data to update.";
-            } else {
-                speakOutput = data.map(e => e.startDate);
-            }
+        let data = getUserInfo(userID);
 
+        const speakOutput = "Your starting day is currently set to " + data.startDay;
+        return responseBuilder
+        .speak(speakOutput)
+        .getResponse();
+    }
+};
+const ManagerHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+        && Alexa.getIntentName(handlerInput.requestEnvelope) === 'Manager';       
+    },
+    async handle(handlerInput) {
+        const {responseBuilder } = handlerInput;
+        let data = getUserInfo(userID);
+
+        if (data.managerInfo.managerAssigned == true) {
+            const speakOutput = "Your manager's name is " + data.ManagerInfo.managerName + " You can reach them though the email " + data.ManagerInfo.managerContact;
             return responseBuilder
             .speak(speakOutput)
-            .reprompt(speakOutput)
             .getResponse();
-        })
-        .catch((err) => {
-            const speakOutput = "We cannot get your user information right now. Try again!"
+        } else {
+            const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your internship.";
             return responseBuilder
             .speak(speakOutput)
             .getResponse();
-        })
+        }
     }
 };
 const HelpIntentHandler = {
@@ -202,6 +191,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         LaunchRequestHandler,
         ListOnboardingTimelineFullHandler,
         TellMeMyStartingDayHandler,
+        ManagerHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
