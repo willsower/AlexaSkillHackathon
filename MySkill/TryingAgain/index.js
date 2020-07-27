@@ -28,7 +28,8 @@ const LaunchRequestHandler = {
 };
 const ListOnboardingTimelineFullHandler = {
     canHandle(handlerInput) {
-        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'ListOnboardingTimelineFull';
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'ListOnboardingTimelineFull';
     },
     handle(handlerInput) {
         const speakOutput = BeforeStart3060 + BeforeStart2030 + BeforeStart1020 + OneWeekBeforeStart + fridayBefore + firstWeek + ByDay30ofEmployment;
@@ -40,38 +41,44 @@ const ListOnboardingTimelineFullHandler = {
 };
 const TellMeMyStartingDayHandler = {
     canHandle(handlerInput) {
-        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
     handle(handlerInput) {
-        condition = {};
+        // let condition = {};
 
-        condition["userId"] = {
-            ComparisonOperator: "EQ",
-            AttributeValueList:[{S: "12345ABC"}]
-        }
+        // condition["userId"] = {
+        //     ComparisonOperator: "EQ",
+        //     AttributeValueList:[{S: "12345ABC"}]
+        // }
 
-        condition["userName"] = {
-            ComparisonOperator: "EQ",
-            AttributeValueList: [{S: "Tai Rose"}]
-        }
+        // condition["userName"] = {
+        //     ComparisonOperator: "EQ",
+        //     AttributeValueList: [{S: "Tai Rose"}]
+        // }
 
-        let params = {
-            TableName: "PreOnboard",
-            KeyConditions: condition,
-            ProjectionExpression: "startDate"
-        };
+        // let params = {
+        //     TableName: "PreOnboard",
+        //     KeyConditions: condition,
+        //     ProjectionExpression: "startDate"
+        // };
 
-        db.query(params, function(err, data) {
-            if (err) {
-                console.log(err, err.stack);
-            } else {
-                const speakOutput = "Your starting day is currently set to " + data["Item"];
-                return handlerInput.responseBuilder
-                    .speak(speakOutput)
-                    .reprompt(speakOutput)
-                    .getResponse();
-            }
-        });
+        // db.query(params, function(err, data) {
+        //     if (err) {
+        //         console.log(err, err.stack);
+        //     } else {
+        //         const speakOutput = "Your starting day is currently set to " + data["Item"];
+        //         return handlerInput.responseBuilder
+        //             .speak(speakOutput)
+        //             .reprompt(speakOutput)
+        //             .getResponse();
+        //     }
+        // });
+        const speakOutput = "Your starting day is currently set to " ;
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
     }
 };
 const HelpIntentHandler = {
