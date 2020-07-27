@@ -1,6 +1,6 @@
 const Alexa = require('ask-sdk-core');
 const awsSDK = require('aws-sdk');
-var db = new awsSDK.DynamoDB();
+awsSDK.config.update({region: "us-east-1"});
 const docClient = new awsSDK.DynamoDB.DocumentClient();
 
 /**
@@ -44,38 +44,28 @@ const TellMeMyStartingDayHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
-    handle(handlerInput) {
-        let condition = {};
-
-        condition["userId"] = {
-            ComparisonOperator: "EQ",
-            AttributeValueList:[{S: "12345ABC"}]
-        }
-
-        condition["userName"] = {
-            ComparisonOperator: "EQ",
-            AttributeValueList: [{S: "Tai Rose"}]
-        }
-
-        let params = {
+    async handle(handlerInput) {
+        var params = {
             TableName: "PreOnboard",
-            KeyConditions: condition,
-            ProjectionExpression: "startDate"
+            Key: {
+                userID: "12345ABC"
+            }
         };
-        let val;
-        db.query(params, function(err, data) {
+let val;
+        docClient.query(params, function(err, data) {
             if (err) {
-                console.log(err, err.stack);
+                console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
             } else {
-                val = data["Item"];
+                console.log("Query succeeded.");
+                val = data;
             }
         });
-        
+
         const speakOutput = "Your starting day is currently set to " + val;
         return handlerInput.responseBuilder
-            .speak(speakOutput)
-            .reprompt(speakOutput)
-            .getResponse();
+        .speak(speakOutput)
+        .reprompt(speakOutput)
+        .getResponse();
     }
 };
 const HelpIntentHandler = {
