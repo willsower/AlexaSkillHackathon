@@ -96,17 +96,17 @@ const ManagerHandler = {
         const {responseBuilder } = handlerInput;
         let data = getUserInfo(userID);
 
-        if (data.managerInfo.managerAssigned == true) {
-            const speakOutput = "Your manager's name is " + data.ManagerInfo.managerName + " You can reach them though the email " + data.ManagerInfo.managerContact;
-            return responseBuilder
-            .speak(speakOutput)
-            .getResponse();
-        } else {
+        // if (data.managerInfo.managerAssigned == true) {
+        //     const speakOutput = "Your manager's name is " + data.ManagerInfo.managerName + " You can reach them though the email " + data.ManagerInfo.managerContact;
+        //     return responseBuilder
+        //     .speak(speakOutput)
+        //     .getResponse();
+        // } else {
             const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your internship.";
             return responseBuilder
             .speak(speakOutput)
             .getResponse();
-        }
+        // }
     }
 };
 const HelpIntentHandler = {
