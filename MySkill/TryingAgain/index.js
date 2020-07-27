@@ -151,12 +151,21 @@ const DueDatesHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'DueDate';
     },
     handle(handlerInput) {
-        const speakOutput = "You can ask me what needs to be done before day 1 at amazon, or ask me your manager's contact information. I can also tell you when you start day is, and details about your documents. How can I help?";
+        var file = this.event.request.intent.slots.HRName.value
+        const {responseBuilder } = handlerInput;
+        let data = getUserInfo(userID);
 
-        return handlerInput.responseBuilder
+        if (data.HRDocumentInfo.file.Completed != true) {
+            const speakOutput = "You haven't completed this yet. The due date for " + file + " is " + data.HRDocumentInfo.file.DueDate + ". And here are some details regarding this document " + data.HRDocumentInfo.file.Details + "Please keep in mind that it could take a couple of days for your information to be updated when you submit a document.";
+            return responseBuilder
             .speak(speakOutput)
-            .reprompt(speakOutput)
             .getResponse();
+        } else {
+            const speakOutput = "It looks like you have completed and turned in " + file;
+            return responseBuilder
+            .speak(speakOutput)
+            .getResponse();
+        }
     }
 }
 const HelpIntentHandler = {
