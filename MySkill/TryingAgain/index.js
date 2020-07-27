@@ -45,36 +45,33 @@ const TellMeMyStartingDayHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
     handle(handlerInput) {
-        // let condition = {};
+        let condition = {};
 
-        // condition["userId"] = {
-        //     ComparisonOperator: "EQ",
-        //     AttributeValueList:[{S: "12345ABC"}]
-        // }
+        condition["userId"] = {
+            ComparisonOperator: "EQ",
+            AttributeValueList:[{S: "12345ABC"}]
+        }
 
-        // condition["userName"] = {
-        //     ComparisonOperator: "EQ",
-        //     AttributeValueList: [{S: "Tai Rose"}]
-        // }
+        condition["userName"] = {
+            ComparisonOperator: "EQ",
+            AttributeValueList: [{S: "Tai Rose"}]
+        }
 
-        // let params = {
-        //     TableName: "PreOnboard",
-        //     KeyConditions: condition,
-        //     ProjectionExpression: "startDate"
-        // };
-
-        // db.query(params, function(err, data) {
-        //     if (err) {
-        //         console.log(err, err.stack);
-        //     } else {
-        //         const speakOutput = "Your starting day is currently set to " + data["Item"];
-        //         return handlerInput.responseBuilder
-        //             .speak(speakOutput)
-        //             .reprompt(speakOutput)
-        //             .getResponse();
-        //     }
-        // });
-        const speakOutput = "Your starting day is currently set to " ;
+        let params = {
+            TableName: "PreOnboard",
+            KeyConditions: condition,
+            ProjectionExpression: "startDate"
+        };
+        let val;
+        db.query(params, function(err, data) {
+            if (err) {
+                console.log(err, err.stack);
+            } else {
+                val = data["Item"];
+            }
+        });
+        
+        const speakOutput = "Your starting day is currently set to " + val;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
