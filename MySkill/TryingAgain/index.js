@@ -102,11 +102,33 @@ const ManagerHandler = {
         //     .speak(speakOutput)
         //     .getResponse();
         // } else {
-            const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your internship.";
+            const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your first day.";
             return responseBuilder
             .speak(speakOutput)
             .getResponse();
         // }
+    }
+};
+const ITGearHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+        && Alexa.getIntentName(handlerInput.requestEnvelope) === 'ITGear';       
+    },
+    async handle(handlerInput) {
+        const {responseBuilder } = handlerInput;
+        let data = getUserInfo(userID);
+
+        if (data.ITGear.Shipped == true) {
+            const speakOutput = "Your IT Gear is currently being shipped. The tracking number is " + data.ITGear.TrackingNumber.S;
+            return responseBuilder
+            .speak(speakOutput)
+            .getResponse();
+        } else {
+            const speakOutput = "You currently don't have any IT Gear shipments. Please check again about a week prior to your first day. You should have received your gear on the Friday prior to your start day. If not, contact HR.";
+            return responseBuilder
+            .speak(speakOutput)
+            .getResponse();
+        }
     }
 };
 const HelpIntentHandler = {
@@ -192,6 +214,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         ListOnboardingTimelineFullHandler,
         TellMeMyStartingDayHandler,
         ManagerHandler,
+        ITGearHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
