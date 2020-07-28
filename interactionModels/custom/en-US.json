@@ -1,0 +1,160 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "pre onboarding",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": [
+            "help"
+          ]
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "ListOnboardingTimelineFull",
+          "slots": [],
+          "samples": [
+            "tell me my pre onboarding timeline",
+            "tell me my onboarding timeline",
+            "what do I need to finish on my pre onboarding timeline",
+            "give me my checklist before day one",
+            "what do I need to do before day one",
+            "what is my pre onboarding timeline",
+            "tell me my timeline"
+          ]
+        },
+        {
+          "name": "TellMeMyStartingDay",
+          "slots": [],
+          "samples": [
+            "when is my start day",
+            "when do I start work",
+            "what day do I start work",
+            "when is my day one",
+            "when is day one",
+            "when do I start working",
+            "tell me my starting day",
+            "tell me my start day",
+            "when is my starting day",
+            "what is my starting day"
+          ]
+        },
+        {
+          "name": "Manager",
+          "slots": [],
+          "samples": [
+            "what is the name and email of my manager",
+            "email of my manager",
+            "name of my manager",
+            "email my manager",
+            "email manager",
+            "contact manager",
+            "when do I get a manager",
+            "tell me my manager\u0027s email and name",
+            "tell me my manager\u0027s email",
+            "tell me my manager\u0027s name",
+            "tell me my manager",
+            "who\u0027s my manager and what is their email",
+            "who\u0027s my manager",
+            "do I have a manager yet",
+            "do I have a manager",
+            "manager name",
+            "manager email",
+            "what is my manager\u0027s email",
+            "contact my manager",
+            "manager contact",
+            "manager",
+            "what is my manager",
+            "who is my manager"
+          ]
+        },
+        {
+          "name": "ITGear",
+          "slots": [],
+          "samples": [
+            "When will my it gear be here",
+            "its friday and I don\u0027t have it gear",
+            "IT Gear",
+            "when will my IT Gear come",
+            "do I have any shipments",
+            "When will my IT Gear ship",
+            "tracking number for my IT Gear",
+            "tracking number",
+            "what\u0027s the tracking number",
+            "has my IT Gear shipped",
+            "where is my IT Gear"
+          ]
+        },
+        {
+          "name": "HRDocuments",
+          "slots": [],
+          "samples": [
+            "all HR Documents",
+            "HR Documents in full",
+            "what are all my tasks I need to compete",
+            "who can I contact about my HR documents",
+            "I have a question about my HR documents",
+            "what HR documents do I need to complete"
+          ]
+        },
+        {
+          "name": "DueDate",
+          "slots": [
+            {
+              "name": "HRName",
+              "type": "TodoDocuments"
+            }
+          ],
+          "samples": [
+            "what is due",
+            "due date for {HRName}",
+            "when will the {HRName} be due",
+            "Have I completed {HRName}",
+            "{HRName} due date",
+            "When do I need to complete {HRName}",
+            "When is {HRName} due"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "values": [
+            {
+              "name": {
+                "value": "Background Check"
+              }
+            },
+            {
+              "name": {
+                "value": "I-9 Section 2"
+              }
+            },
+            {
+              "name": {
+                "value": "I-9 Section 1"
+              }
+            },
+            {
+              "name": {
+                "value": "I-9"
+              }
+            }
+          ],
+          "name": "TodoDocuments"
+        }
+      ]
+    }
+  },
+  "version": "19"
+}
