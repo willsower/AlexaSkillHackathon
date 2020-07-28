@@ -1,21 +1,8 @@
-/*
-*   Pre Onboarding Alexa Skill
-*   Authors: Timothy Bui, Alec Jenab, Muhammad Raza, Taichen Rose, and Robert Zhang
-*   Purpose: The purpose of this skill is to help newly hires/interns get ready prior to day one.
-*            The skill will be able to track IT Gear, answer questions about due dates, give the
-*            timeline of their pre onboarding journey, list manager contact info, and more.
-*   Functionality: This program is backed up by storing data in DynamoDB. The skill simply reads
-*                  information that has been updated on the server side. 
-*/
 const Alexa = require('ask-sdk-core');
 const awsSDK = require('aws-sdk');
 awsSDK.config.update({region: "us-east-1"});
 var db = new awsSDK.DynamoDB();
 const tableName = "PreOnboard";
-
-
-//User ID. This will be assigned to each user
-//which will correspond to DynamoDB
 const userID = "12345ABC";
 
 /**
@@ -47,8 +34,7 @@ function getUserInfo(userID) {
 
     const params = {
         TableName: tableName,
-        KeyConditions: condition,
-        ProjectionExpression: "startDate"
+        KeyConditions: condition
     }
     db.query(params, (err, data) => {
         if (err) {
@@ -65,7 +51,7 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = "Welcome, to the pre onboarding skill! You can ask about what is due this week, or about your timeline. Go ahead and say help if you want more example commands. Or exit if you are done.";
+        const speakOutput = "Welcome, to the pre onboarding skill! You can ask about what is due this week, or about your timeline. Go ahead and say help if you want more example commands. Or exit if you are done. Please note that if you have completed something and it's not marked correctly, it could take a couple of days to update.";
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -94,7 +80,8 @@ const TellMeMyStartingDayHandler = {
         const {responseBuilder } = handlerInput;
         let data = getUserInfo(userID);
 
-        const speakOutput = "Your starting day is currently set to " + data.startDay;
+        // const speakOutput = "Your starting day is currently set to " + data.startDay;
+        const speakOutput = "Your starting day is currently set to 09/15/2020";
         return responseBuilder
         .speak(speakOutput)
         .getResponse();
@@ -168,17 +155,22 @@ const DueDatesHandler = {
         const {responseBuilder } = handlerInput;
         let data = getUserInfo(userID);
 
-        if (data.HRDocumentInfo.file.Completed != true) {
-            const speakOutput = "You haven't completed this yet. The due date for " + file + " is " + data.HRDocumentInfo.file.DueDate + ". And here are some details regarding this document " + data.HRDocumentInfo.file.Details + "Please keep in mind that it could take a couple of days for your information to be updated when you submit a document.";
+            const speakOutput =  "Due " + file;
             return responseBuilder
             .speak(speakOutput)
             .getResponse();
-        } else {
-            const speakOutput = "It looks like you have completed and turned in " + file;
-            return responseBuilder
-            .speak(speakOutput)
-            .getResponse();
-        }
+
+        // if (data.HRDocumentInfo.file.Completed != true) {
+        //     const speakOutput = "You haven't completed this yet. The due date for " + file + " is " + data.HRDocumentInfo.file.DueDate + ". And here are some details regarding this document " + data.HRDocumentInfo.file.Details + "Please keep in mind that it could take a couple of days for your information to be updated when you submit a document.";
+        //     return responseBuilder
+        //     .speak(speakOutput)
+        //     .getResponse();
+        // } else {
+        //     const speakOutput = "It looks like you have completed and turned in " + file;
+        //     return responseBuilder
+        //     .speak(speakOutput)
+        //     .getResponse();
+        // }
     }
 }
 const HelpIntentHandler = {
@@ -266,6 +258,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         ManagerHandler,
         ITGearHandler,
         MyHRDocumentsHandler,
+        DueDatesHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
