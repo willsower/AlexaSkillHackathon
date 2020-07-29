@@ -3,7 +3,7 @@ const awsSDK = require('aws-sdk');
 awsSDK.config.update({region: "us-east-1"});
 const tableName = "PreOnboard";
 const userID = "12345ABC";
-const userName = "Tai Rose";
+const userName = "[Name]";
 
 /**
  * Onboarding Timeline 
@@ -20,8 +20,32 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 * Helper functions
 */
 
-function getCondition(userId, userName) {
+/*
+* getUserInfo function will get full database query of the user 
+*/
+async function getUserInfo(userID, userName) {
+    //Gets access to DB role
+    const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
+    const credentials = await STS.assumeRole({
+        RoleArn: 'arn:aws:iam::336655019913:role/ReadOnlyAccessDB',
+        RoleSessionName: 'ReadAccessDB' // You can rename with any name
+    }, (err, res) => {
+        if (err) {
+            console.log('AssumeRole FAILED: ', err);
+            throw new Error('Error while assuming role');
+        }
+        return res;
+    }).promise();
+    
+    //Gets DB credentials 
     let condition = {};
+    const dynamoDB = new awsSDK.DynamoDB({
+            apiVersion: '2012-08-10',
+            accessKeyId: credentials.Credentials.AccessKeyId,
+            secretAccessKey: credentials.Credentials.SecretAccessKey,
+            sessionToken: credentials.Credentials.SessionToken
+        });
+    
     //Get condition variables (primary, sort key)
     condition["userId"] = {
         ComparisonOperator: "EQ",
@@ -32,7 +56,23 @@ function getCondition(userId, userName) {
         ComparisonOperator: "EQ",
         AttributeValueList: [{S: userName}]
     }
-    return condition;
+
+    //Create db parameters 
+    const params = {
+        TableName: tableName,
+        KeyConditions: condition
+    }
+    
+    //Query info from db 
+    await dynamoDB.query(params, (err, data) => {
+        if (err) {
+            console.log(err, err.stack);
+            return 0;
+        } 
+        //Return the info as a JSON object 
+        // console.log(data["Items"][0]['startDate']['S']);
+        return JSON.stringify(data, null, 2);
+    })
 }
 
 const LaunchRequestHandler = {
@@ -66,47 +106,16 @@ const TellMeMyStartingDayHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
     async handle(handlerInput) {
-        let condition = getCondition(userID, userName);
-        //Gets access to DB role
-        const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
-        const credentials = await STS.assumeRole({
-            RoleArn: 'arn:aws:iam::336655019913:role/ReadOnlyAccessDB',
-            RoleSessionName: 'ReadAccessDB' // You can rename with any name
-        }, (err, res) => {
-            if (err) {
-                console.log('AssumeRole FAILED: ', err);
-                throw new Error('Error while assuming role');
-            }
-            return res;
-        }).promise();
-        
-        //Gets DB credentials 
-        const dynamoDB = new awsSDK.DynamoDB({
-            apiVersion: '2012-08-10',
-            accessKeyId: credentials.Credentials.AccessKeyId,
-            secretAccessKey: credentials.Credentials.SecretAccessKey,
-            sessionToken: credentials.Credentials.SessionToken
-        });
-        
-        //Create db parameters 
-        const params = {
-            TableName: tableName,
-            KeyConditions: condition
-        }
-        
-        //Query info from db 
-        await dynamoDB.query(params, (err, data) => {
-            if (err) {
-                console.log(err, err.stack);
-                return 0;
-            } 
-            const speakOutput = "Your starting day is currently set to " + data["Items"][0]['startDate']['S'];
-            // const speakOutput = "Your starting day is currently set to 09/15/2020";
-            return handlerInput.responseBuilder
-                .speak(speakOutput)
-                .reprompt(speakOutput)
-                .getResponse();
-        })
+        let data = await getUserInfo(userID, userName);
+        // console.log(data);
+
+        //Return the info as a JSON object 
+        // const speakOutput = "Your starting day is currently set to " + data["Items"][0]['startDate']['S'];
+        const speakOutput = "Your starting day is currently set to 09/15/2020";
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
     }
 };
 const ManagerHandler = {
@@ -114,35 +123,28 @@ const ManagerHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
         && Alexa.getIntentName(handlerInput.requestEnvelope) === 'Manager';       
     },
-    async handle(handlerInput) {
-        let dynamoDB = getDB();
-        let condition = getCondition(userID, userName);
-        
-        //Create db parameters 
-        const params = {
-            TableName: tableName,
-            KeyConditions: condition
-        }
-        
-        //Query info from db 
-        await dynamoDB.query(params, (err, data) => {
-            if (err) {
-                console.log(err, err.stack);
-                return 0;
-            } 
-            if (data["Items"][0]['ManagerInfo']['ManagerAssigned']['BOOL'] == true) {
-                const speakOutput = "Your manager's name is " + data["Items"][0]['ManagerInfo']['ManagerName']['S'] + " You can reach them though the email " + data["Items"][0]['ManagerInfo']['ManagerContact']['S'];
-                return handlerInput.responseBuilder
-                .speak(speakOutput)
-                .getResponse();
-            } else {
-                const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your first day.";
-                return handlerInput.responseBuilder
-                    .speak(speakOutput)
-                    .reprompt(speakOutput)
-                    .getResponse();
-            }
-        })
+    handle(handlerInput) {
+        let data = getUserInfo(userID, userName);
+
+        // if (data.managerInfo.managerAssigned == true) {
+            // const speakOutput = "Your manager's name is " + data.ManagerInfo.managerName + " You can reach them though the email " + data.ManagerInfo.managerContact;
+            // const speakOutput = "Your manager's name is Jean Doe. You can reach them though the email doej123@amazon.com";
+            // return handlerInput.responseBuilder
+            // .speak(speakOutput)
+            // .getResponse();
+            
+        const speakOutput = "Your manager's name is Jean Doe. You can reach them though the email doej123@amazon.com";
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+        // } else {
+            // const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your first day.";
+            // return handlerInput.responseBuilder
+            //     .speak(speakOutput)
+            //     .reprompt(speakOutput)
+            //     .getResponse();
+        // }
     }
 };
 const ITGearHandler = {
@@ -187,10 +189,12 @@ const DueDatesHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'DueDate';
     },
     handle(handlerInput) {
-        var file = this.event.request.intent.slots.HRName.value
+        const slots = handlerInput.requestEnvelope.request.intent.slots;
+        const val = slots['HRName'].value;
+        console.log(val);
         let data = getUserInfo(userID, userName);
 
-            const speakOutput =  "Due " + file;
+            const speakOutput =  "Due ";
             return handlerInput.responseBuilder
                 .speak(speakOutput)
                 .reprompt(speakOutput)
