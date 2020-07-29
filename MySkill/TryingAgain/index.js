@@ -1,7 +1,6 @@
 const Alexa = require('ask-sdk-core');
 const awsSDK = require('aws-sdk');
 awsSDK.config.update({region: "us-east-1"});
-var db = new awsSDK.DynamoDB();
 const tableName = "PreOnboard";
 const userID = "12345ABC";
 const userName = "Tai Rose";
@@ -21,8 +20,30 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 * Helper functions
 */
 
-function getUserInfo(userID) {
+
+
+async function getUserInfo(userID) {
+    const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
+    const credentials = await STS.assumeRole({
+        RoleArn: 'arn:aws:iam::336655019913:role/ReadOnlyAccessDB',
+        RoleSessionName: 'ReadAccessDB' // You can rename with any name
+    }, (err, res) => {
+        if (err) {
+            console.log('AssumeRole FAILED: ', err);
+            throw new Error('Error while assuming role');
+        }
+        return res;
+    }).promise();
+    
+    
     let condition = {};
+    const dynamoDB = new awsSDK.DynamoDB({
+            apiVersion: '2012-08-10',
+            accessKeyId: credentials.Credentials.AccessKeyId,
+            secretAccessKey: credentials.Credentials.SecretAccessKey,
+            sessionToken: credentials.Credentials.SessionToken
+        });
+    
     condition["userId"] = {
         ComparisonOperator: "EQ",
         AttributeValueList:[{S: "12345ABC"}]
@@ -37,7 +58,7 @@ function getUserInfo(userID) {
         TableName: tableName,
         KeyConditions: condition
     }
-    db.query(params, (err, data) => {
+    await dynamoDB.query(params, (err, data) => {
         if (err) {
             console.log(err, err.stack);
             return 0;
@@ -80,8 +101,8 @@ const TellMeMyStartingDayHandler = {
     handle(handlerInput) {
         let data = getUserInfo(userID);
 
-        // const speakOutput = "Your starting day is currently set to " + data.startDay;
-        const speakOutput = "Your starting day is currently set to 09/15/2020";
+        const speakOutput = "Your starting day is currently set to " + data.startDay;
+        // const speakOutput = "Your starting day is currently set to 09/15/2020";
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
