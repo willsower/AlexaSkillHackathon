@@ -4,7 +4,6 @@ awsSDK.config.update({region: "us-east-1"});
 const tableName = "PreOnboard";
 const userID = "12345ABC";
 const userName = "Tai Rose";
-var dynamoDB;
 
 /**
  * Onboarding Timeline 
@@ -20,33 +19,6 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 /*
 * Helper functions
 */
-
-/*
-* getDB sets up database credentials
-*/
-async function getDB() {
-    //Gets access to DB role
-    const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
-    const credentials = await STS.assumeRole({
-        RoleArn: 'arn:aws:iam::336655019913:role/ReadOnlyAccessDB',
-        RoleSessionName: 'ReadAccessDB' // You can rename with any name
-    }, (err, res) => {
-        if (err) {
-            console.log('AssumeRole FAILED: ', err);
-            throw new Error('Error while assuming role');
-        }
-        return res;
-    }).promise();
-    
-    //Gets DB credentials 
-    dynamoDB = new awsSDK.DynamoDB({
-            apiVersion: '2012-08-10',
-            accessKeyId: credentials.Credentials.AccessKeyId,
-            secretAccessKey: credentials.Credentials.SecretAccessKey,
-            sessionToken: credentials.Credentials.SessionToken
-        });
-    return dynamoDB;
-}
 
 function getCondition(userId, userName) {
     let condition = {};
@@ -94,8 +66,27 @@ const TellMeMyStartingDayHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
     async handle(handlerInput) {
-        let dynamoDB = getDB();
         let condition = getCondition(userID, userName);
+        //Gets access to DB role
+        const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
+        const credentials = await STS.assumeRole({
+            RoleArn: 'arn:aws:iam::336655019913:role/ReadOnlyAccessDB',
+            RoleSessionName: 'ReadAccessDB' // You can rename with any name
+        }, (err, res) => {
+            if (err) {
+                console.log('AssumeRole FAILED: ', err);
+                throw new Error('Error while assuming role');
+            }
+            return res;
+        }).promise();
+        
+        //Gets DB credentials 
+        const dynamoDB = new awsSDK.DynamoDB({
+            apiVersion: '2012-08-10',
+            accessKeyId: credentials.Credentials.AccessKeyId,
+            secretAccessKey: credentials.Credentials.SecretAccessKey,
+            sessionToken: credentials.Credentials.SessionToken
+        });
         
         //Create db parameters 
         const params = {
