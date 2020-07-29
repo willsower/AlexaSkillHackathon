@@ -20,7 +20,10 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 * Helper functions
 */
 
-async function getUserInfo(userID) {
+/*
+* getUserInfo function will get full database query of the user 
+*/
+async function getUserInfo(userID, userName) {
     const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
     const credentials = await STS.assumeRole({
         RoleArn: 'arn:aws:iam::336655019913:role/ReadOnlyAccessDB',
@@ -44,12 +47,12 @@ async function getUserInfo(userID) {
     
     condition["userId"] = {
         ComparisonOperator: "EQ",
-        AttributeValueList:[{S: "12345ABC"}]
+        AttributeValueList:[{S: userID}]
     }
 
     condition["userName"] = {
         ComparisonOperator: "EQ",
-        AttributeValueList: [{S: "Tai Rose"}]
+        AttributeValueList: [{S: userName}]
     }
 
     const params = {
@@ -62,7 +65,7 @@ async function getUserInfo(userID) {
             return 0;
         } 
         console.log(JSON.stringify(data, null, 2));
-        return data["Item"];
+        return JSON.stringify(data, null, 2);
     })
 }
 
@@ -97,7 +100,7 @@ const TellMeMyStartingDayHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
     handle(handlerInput) {
-        let data = getUserInfo(userID);
+        let data = getUserInfo(userID, userName);
 
         const speakOutput = "Your starting day is currently set to " + data.startDay;
         // const speakOutput = "Your starting day is currently set to 09/15/2020";
@@ -113,7 +116,7 @@ const ManagerHandler = {
         && Alexa.getIntentName(handlerInput.requestEnvelope) === 'Manager';       
     },
     handle(handlerInput) {
-        let data = getUserInfo(userID);
+        let data = getUserInfo(userID, userName);
 
         // if (data.managerInfo.managerAssigned == true) {
         //     const speakOutput = "Your manager's name is " + data.ManagerInfo.managerName + " You can reach them though the email " + data.ManagerInfo.managerContact;
@@ -135,7 +138,7 @@ const ITGearHandler = {
         && Alexa.getIntentName(handlerInput.requestEnvelope) === 'ITGear';       
     },
     handle(handlerInput) {
-        let data = getUserInfo(userID);
+        let data = getUserInfo(userID, userName);
 
         // if (data.ITGear.Shipped == true) {
         //     const speakOutput = "Your IT Gear is currently being shipped. The tracking number is " + data.ITGear.TrackingNumber.S;
@@ -172,7 +175,7 @@ const DueDatesHandler = {
     },
     handle(handlerInput) {
         var file = this.event.request.intent.slots.HRName.value
-        let data = getUserInfo(userID);
+        let data = getUserInfo(userID, userName);
 
             const speakOutput =  "Due " + file;
             return handlerInput.responseBuilder
