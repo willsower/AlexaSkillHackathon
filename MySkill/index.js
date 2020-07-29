@@ -21,9 +21,9 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 */
 
 /*
-* getUserInfo function will get full database query of the user 
+* getDB sets up database credentials
 */
-async function getUserInfo(userID, userName) {
+async function getDB() {
     //Gets access to DB role
     const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
     const credentials = await STS.assumeRole({
@@ -38,14 +38,17 @@ async function getUserInfo(userID, userName) {
     }).promise();
     
     //Gets DB credentials 
-    let condition = {};
     const dynamoDB = new awsSDK.DynamoDB({
             apiVersion: '2012-08-10',
             accessKeyId: credentials.Credentials.AccessKeyId,
             secretAccessKey: credentials.Credentials.SecretAccessKey,
             sessionToken: credentials.Credentials.SessionToken
         });
-    
+    return dynamoDB;
+}
+
+function getCondition(userId, userName) {
+    let condition = {};
     //Get condition variables (primary, sort key)
     condition["userId"] = {
         ComparisonOperator: "EQ",
@@ -56,23 +59,7 @@ async function getUserInfo(userID, userName) {
         ComparisonOperator: "EQ",
         AttributeValueList: [{S: userName}]
     }
-
-    //Create db parameters 
-    const params = {
-        TableName: tableName,
-        KeyConditions: condition
-    }
-    
-    //Query info from db 
-    await dynamoDB.query(params, (err, data) => {
-        if (err) {
-            console.log(err, err.stack);
-            return 0;
-        } 
-        //Return the info as a JSON object 
-        console.log(JSON.stringify(data, null, 2));
-        return JSON.stringify(data, null, 2);
-    })
+    return condition;
 }
 
 const LaunchRequestHandler = {
@@ -105,15 +92,29 @@ const TellMeMyStartingDayHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TellMeMyStartingDay';
     },
-    handle(handlerInput) {
-        let data = getUserInfo(userID, userName);
-
-        const speakOutput = "Your starting day is currently set to " + data.startDay;
-        // const speakOutput = "Your starting day is currently set to 09/15/2020";
-        return handlerInput.responseBuilder
-            .speak(speakOutput)
-            .reprompt(speakOutput)
-            .getResponse();
+    async handle(handlerInput) {
+        let dynamoDB = getDB();
+        let condition = getCondition(userID, userName);
+        
+        //Create db parameters 
+        const params = {
+            TableName: tableName,
+            KeyConditions: condition
+        }
+        
+        //Query info from db 
+        await dynamoDB.query(params, (err, data) => {
+            if (err) {
+                console.log(err, err.stack);
+                return 0;
+            } 
+            const speakOutput = "Your starting day is currently set to " + data["Items"][0]['startDate']['S'];
+            // const speakOutput = "Your starting day is currently set to 09/15/2020";
+            return handlerInput.responseBuilder
+                .speak(speakOutput)
+                .reprompt(speakOutput)
+                .getResponse();
+        })
     }
 };
 const ManagerHandler = {
