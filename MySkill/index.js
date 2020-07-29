@@ -24,6 +24,7 @@ const firstWeek = "In your first week of employment at amazon. You should have a
 * getUserInfo function will get full database query of the user 
 */
 async function getUserInfo(userID, userName) {
+    //Gets access to DB role
     const STS = new awsSDK.STS({ apiVersion: '2011-06-15' });
     const credentials = await STS.assumeRole({
         RoleArn: 'arn:aws:iam::336655019913:role/ReadOnlyAccessDB',
@@ -36,7 +37,7 @@ async function getUserInfo(userID, userName) {
         return res;
     }).promise();
     
-    
+    //Gets DB credentials 
     let condition = {};
     const dynamoDB = new awsSDK.DynamoDB({
             apiVersion: '2012-08-10',
@@ -45,6 +46,7 @@ async function getUserInfo(userID, userName) {
             sessionToken: credentials.Credentials.SessionToken
         });
     
+    //Get condition variables (primary, sort key)
     condition["userId"] = {
         ComparisonOperator: "EQ",
         AttributeValueList:[{S: userID}]
@@ -55,15 +57,19 @@ async function getUserInfo(userID, userName) {
         AttributeValueList: [{S: userName}]
     }
 
+    //Create db parameters 
     const params = {
         TableName: tableName,
         KeyConditions: condition
     }
+    
+    //Query info from db 
     await dynamoDB.query(params, (err, data) => {
         if (err) {
             console.log(err, err.stack);
             return 0;
         } 
+        //Return the info as a JSON object 
         console.log(JSON.stringify(data, null, 2));
         return JSON.stringify(data, null, 2);
     })
