@@ -4,6 +4,7 @@ awsSDK.config.update({region: "us-east-1"});
 const tableName = "PreOnboard";
 const userID = "12345ABC";
 const userName = "Tai Rose";
+var dynamoDB;
 
 /**
  * Onboarding Timeline 
@@ -38,7 +39,7 @@ async function getDB() {
     }).promise();
     
     //Gets DB credentials 
-    const dynamoDB = new awsSDK.DynamoDB({
+    dynamoDB = new awsSDK.DynamoDB({
             apiVersion: '2012-08-10',
             accessKeyId: credentials.Credentials.AccessKeyId,
             secretAccessKey: credentials.Credentials.SecretAccessKey,
@@ -122,21 +123,35 @@ const ManagerHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
         && Alexa.getIntentName(handlerInput.requestEnvelope) === 'Manager';       
     },
-    handle(handlerInput) {
-        let data = getUserInfo(userID, userName);
-
-        // if (data.managerInfo.managerAssigned == true) {
-        //     const speakOutput = "Your manager's name is " + data.ManagerInfo.managerName + " You can reach them though the email " + data.ManagerInfo.managerContact;
-        //     return responseBuilder
-        //     .speak(speakOutput)
-        //     .getResponse();
-        // } else {
-            const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your first day.";
-            return handlerInput.responseBuilder
+    async handle(handlerInput) {
+        let dynamoDB = getDB();
+        let condition = getCondition(userID, userName);
+        
+        //Create db parameters 
+        const params = {
+            TableName: tableName,
+            KeyConditions: condition
+        }
+        
+        //Query info from db 
+        await dynamoDB.query(params, (err, data) => {
+            if (err) {
+                console.log(err, err.stack);
+                return 0;
+            } 
+            if (data["Items"][0]['ManagerInfo']['ManagerAssigned']['BOOL'] == true) {
+                const speakOutput = "Your manager's name is " + data["Items"][0]['ManagerInfo']['ManagerName']['S'] + " You can reach them though the email " + data["Items"][0]['ManagerInfo']['ManagerContact']['S'];
+                return handlerInput.responseBuilder
                 .speak(speakOutput)
-                .reprompt(speakOutput)
                 .getResponse();
-        // }
+            } else {
+                const speakOutput = "You currently don't have a manager assigned. Please check back about a month prior to your first day.";
+                return handlerInput.responseBuilder
+                    .speak(speakOutput)
+                    .reprompt(speakOutput)
+                    .getResponse();
+            }
+        })
     }
 };
 const ITGearHandler = {
