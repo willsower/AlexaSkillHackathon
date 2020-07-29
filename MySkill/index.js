@@ -192,13 +192,46 @@ const DueDatesHandler = {
         const slots = handlerInput.requestEnvelope.request.intent.slots;
         const val = slots['HRName'].value;
         console.log(val);
+        
+        const HRName = slots['HRName'].resolutions.resolutionsPerAuthority[0].values[0].value.name;
         let data = getUserInfo(userID, userName);
-
-            const speakOutput =  "Due ";
-            return handlerInput.responseBuilder
-                .speak(speakOutput)
-                .reprompt(speakOutput)
-                .getResponse();
+        let speakOutput;
+        switch (HRName) {
+            case "Background Check":
+                speakOutput =  "Your background check has been proccessed successfully.";
+                return handlerInput.responseBuilder
+                    .speak(speakOutput)
+                    .reprompt(speakOutput)
+                    .getResponse();
+                break;
+            case "I9 Section 1":
+                speakOutput =  "Section 1 has successfully been turned in.";
+                return handlerInput.responseBuilder
+                    .speak(speakOutput)
+                    .reprompt(speakOutput)
+                    .getResponse();
+                break;
+            case "I9 Section 2":
+                speakOutput =  "You have not yet completed section 2. Please get this done by the third day of employment.";
+                return handlerInput.responseBuilder
+                    .speak(speakOutput)
+                    .reprompt(speakOutput)
+                    .getResponse();
+                break;
+            case "I9":
+                speakOutput =  "Section 1 has successfully been turned in. You have not yet completed section 2. Please get this done by the third day of employment.";
+                return handlerInput.responseBuilder
+                    .speak(speakOutput)
+                    .reprompt(speakOutput)
+                    .getResponse();
+                break;  
+            default:
+                speakOutput =  "The file you currently have stated is not on file";
+                return handlerInput.responseBuilder
+                    .speak(speakOutput)
+                    .reprompt(speakOutput)
+                    .getResponse();
+        }
 
         // if (data.HRDocumentInfo.file.Completed != true) {
         //     const speakOutput = "You haven't completed this yet. The due date for " + file + " is " + data.HRDocumentInfo.file.DueDate + ". And here are some details regarding this document " + data.HRDocumentInfo.file.Details + "Please keep in mind that it could take a couple of days for your information to be updated when you submit a document.";
