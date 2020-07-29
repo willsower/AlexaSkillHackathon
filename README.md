@@ -2,6 +2,8 @@
 
 ##### Project by: Timothy Bui, Alec Jenab, Muhammad Raza, Taichen Rose, and Robert Zhang
 
+Link to get DB connection: https://developer.amazon.com/en-US/docs/alexa/hosted-skills/alexa-hosted-skills-personal-aws.html
+
 Project Details
 
 Must haves:
